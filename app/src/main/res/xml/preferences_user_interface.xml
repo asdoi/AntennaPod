@@ -35,16 +35,6 @@
                 android:defaultValue="true"
                 android:enabled="true"/>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_category_feeds">
-        <Preference
-            android:key="prefDefaultItemSort"
-            android:summary="@string/pref_set_default_feed_sort_order_sum"
-            android:title="@string/pref_set_default_feed_sort_order_title" />
-        <Preference
-            android:key="prefDefaultItemFilter"
-            android:summary="@string/pref_set_default_feed_filter_sum"
-            android:title="@string/pref_set_default_feed_filter_title" />
-    </PreferenceCategory>
     <PreferenceCategory android:title="@string/external_elements">
         <SwitchPreference
                 android:defaultValue="false"
