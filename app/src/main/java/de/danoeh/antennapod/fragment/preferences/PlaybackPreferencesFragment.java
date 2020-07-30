@@ -21,10 +21,7 @@ import java.util.Map;
 import org.greenrobot.eventbus.EventBus;
 
 public class PlaybackPreferencesFragment extends PreferenceFragmentCompat {
-    private static final String PREF_PLAYBACK_SPEED_LAUNCHER = "prefPlaybackSpeedLauncher";
-    private static final String PREF_PLAYBACK_REWIND_DELTA_LAUNCHER = "prefPlaybackRewindDeltaLauncher";
-    private static final String PREF_PLAYBACK_FAST_FORWARD_DELTA_LAUNCHER = "prefPlaybackFastForwardDeltaLauncher";
-    private static final String PREF_PLAYBACK_PREFER_STREAMING = "prefStreamOverDownload";
+    private static final String PREF_MORE_PLAYBACK_CONTROL = "openPlaybackControls";
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -43,17 +40,8 @@ public class PlaybackPreferencesFragment extends PreferenceFragmentCompat {
 
     private void setupPlaybackScreen() {
         final Activity activity = getActivity();
-
-        findPreference(PREF_PLAYBACK_SPEED_LAUNCHER).setOnPreferenceClickListener(preference -> {
-            new VariableSpeedDialog().show(getChildFragmentManager(), null);
-            return true;
-        });
-        findPreference(PREF_PLAYBACK_REWIND_DELTA_LAUNCHER).setOnPreferenceClickListener(preference -> {
-            SkipPreferenceDialog.showSkipPreference(activity, SkipPreferenceDialog.SkipDirection.SKIP_REWIND, null);
-            return true;
-        });
-        findPreference(PREF_PLAYBACK_FAST_FORWARD_DELTA_LAUNCHER).setOnPreferenceClickListener(preference -> {
-            SkipPreferenceDialog.showSkipPreference(activity, SkipPreferenceDialog.SkipDirection.SKIP_FORWARD, null);
+        findPreference(PREF_MORE_PLAYBACK_CONTROL).setOnPreferenceClickListener(preference -> {
+            ((PreferenceActivity) getActivity()).openScreen(R.xml.preferences_playback_control);
             return true;
         });
         if (!PictureInPictureUtil.supportsPictureInPicture(activity)) {
@@ -61,12 +49,6 @@ public class PlaybackPreferencesFragment extends PreferenceFragmentCompat {
             behaviour.setEntries(R.array.video_background_behavior_options_without_pip);
             behaviour.setEntryValues(R.array.video_background_behavior_values_without_pip);
         }
-        findPreference(PREF_PLAYBACK_PREFER_STREAMING).setOnPreferenceChangeListener((preference, newValue) -> {
-            // Update all visible lists to reflect new streaming action button
-            EventBus.getDefault().post(new UnreadItemsUpdateEvent());
-            UsageStatistics.askAgainLater(UsageStatistics.ACTION_STREAM);
-            return true;
-        });
 
         buildEnqueueLocationPreference();
     }

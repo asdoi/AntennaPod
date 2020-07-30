@@ -11,13 +11,17 @@ import android.widget.ListView;
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.activity.MainActivity;
 import de.danoeh.antennapod.activity.PreferenceActivity;
+import de.danoeh.antennapod.core.event.UnreadItemsUpdateEvent;
+import de.danoeh.antennapod.core.preferences.UsageStatistics;
 import de.danoeh.antennapod.core.preferences.UserPreferences;
 import de.danoeh.antennapod.fragment.NavDrawerFragment;
 import org.apache.commons.lang3.ArrayUtils;
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
 public class UserInterfacePreferencesFragment extends PreferenceFragmentCompat {
+    private static final String PREF_PLAYBACK_PREFER_STREAMING = "prefStreamOverDownload";
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -74,6 +78,13 @@ public class UserInterfacePreferencesFragment extends PreferenceFragmentCompat {
                     builder.create().show();
                     return true;
                 });
+
+        findPreference(PREF_PLAYBACK_PREFER_STREAMING).setOnPreferenceChangeListener((preference, newValue) -> {
+            // Update all visible lists to reflect new streaming action button
+            EventBus.getDefault().post(new UnreadItemsUpdateEvent());
+            UsageStatistics.askAgainLater(UsageStatistics.ACTION_STREAM);
+            return true;
+        });
 
         if (Build.VERSION.SDK_INT >= 26) {
             findPreference(UserPreferences.PREF_EXPANDED_NOTIFICATION).setVisible(false);

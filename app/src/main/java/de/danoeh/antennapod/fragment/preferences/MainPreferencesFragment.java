@@ -99,6 +99,9 @@ public class MainPreferencesFragment extends PreferenceFragmentCompat {
                 .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_user_interface));
         config.index(R.xml.preferences_playback)
                 .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_playback));
+        config.index(R.xml.preferences_playback_control)
+                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_playback))
+                .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_playback_control));
         config.index(R.xml.preferences_network)
                 .addBreadcrumb(PreferenceActivity.getTitleOfPage(R.xml.preferences_network));
         config.index(R.xml.preferences_storage)
