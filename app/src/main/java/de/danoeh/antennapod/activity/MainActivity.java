@@ -550,6 +550,10 @@ public class MainActivity extends CastEnabledActivity {
     //Hardware keyboard support
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (super.onKeyUp(keyCode, event)) {
+            return true;
+        }
+
         AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         Integer customKeyCode = null;
 
@@ -571,17 +575,16 @@ public class MainActivity extends CastEnabledActivity {
             case KeyEvent.KEYCODE_W:
                 audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
                         AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
-                return true;
+                break;
             case KeyEvent.KEYCODE_MINUS: //Fallthrough
             case KeyEvent.KEYCODE_S:
                 audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
                         AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
-                return true;
+                break;
             case KeyEvent.KEYCODE_M:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
                             AudioManager.ADJUST_TOGGLE_MUTE, AudioManager.FLAG_SHOW_UI);
-                    return true;
                 }
                 break;
         }
@@ -590,9 +593,9 @@ public class MainActivity extends CastEnabledActivity {
             Intent intent = new Intent(this, PlaybackService.class);
             intent.putExtra(MediaButtonReceiver.EXTRA_KEYCODE, customKeyCode);
             ContextCompat.startForegroundService(this, intent);
-            return true;
         }
-        return super.onKeyUp(keyCode, event);
+
+        return true;
     }
 
 }

@@ -489,6 +489,10 @@ public class VideoplayerActivity extends MediaplayerActivity {
     //Hardware keyboard support
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if(super.onKeyUp(keyCode, event)){
+            return true;
+        }
+
         AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
         switch (keyCode) {
@@ -496,42 +500,41 @@ public class VideoplayerActivity extends MediaplayerActivity {
             case KeyEvent.KEYCODE_SPACE:
                 onPlayPause();
                 toggleVideoControlsVisibility();
-                return true;
+                break;
             case KeyEvent.KEYCODE_J: //Fallthrough
             case KeyEvent.KEYCODE_A:
             case KeyEvent.KEYCODE_COMMA:
                 onRewind();
                 showSkipAnimation(false);
-                return true;
+                break;
             case KeyEvent.KEYCODE_K: //Fallthrough
             case KeyEvent.KEYCODE_D:
             case KeyEvent.KEYCODE_PERIOD:
                 onFastForward();
                 showSkipAnimation(true);
-                return true;
+                break;
             case KeyEvent.KEYCODE_F: //Fallthrough
             case KeyEvent.KEYCODE_ESCAPE:
                 //Exit fullscreen mode
                 onBackPressed();
-                return true;
+                break;
             case KeyEvent.KEYCODE_I:
                 compatEnterPictureInPicture();
-                return true;
+                break;
             case KeyEvent.KEYCODE_PLUS: //Fallthrough
             case KeyEvent.KEYCODE_W:
                 audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
                         AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
-                return true;
+                break;
             case KeyEvent.KEYCODE_MINUS: //Fallthrough
             case KeyEvent.KEYCODE_S:
                 audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
                         AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
-                return true;
+                break;
             case KeyEvent.KEYCODE_M:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
                             AudioManager.ADJUST_TOGGLE_MUTE, AudioManager.FLAG_SHOW_UI);
-                    return true;
                 }
                 break;
         }
@@ -539,8 +542,7 @@ public class VideoplayerActivity extends MediaplayerActivity {
         //Go to x% of video:
         if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {
             controller.seekTo((int) (0.1f * (keyCode - KeyEvent.KEYCODE_0) * controller.getDuration()));
-            return true;
         }
-        return super.onKeyUp(keyCode, event);
+        return true;
     }
 }
