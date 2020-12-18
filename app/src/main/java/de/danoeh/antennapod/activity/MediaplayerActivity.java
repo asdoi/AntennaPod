@@ -34,6 +34,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+
 import de.danoeh.antennapod.R;
 import de.danoeh.antennapod.core.event.PlaybackPositionEvent;
 import de.danoeh.antennapod.core.feed.FeedItem;
@@ -87,6 +89,7 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
     private ImageButton butFF;
     private TextView txtvFF;
     private ImageButton butSkip;
+    private TextView currentDisplaySeek;
 
     private boolean showTimeLeft = false;
 
@@ -492,6 +495,7 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
         setContentView(getContentViewResourceId());
         sbPosition = findViewById(R.id.sbPosition);
         txtvPosition = findViewById(R.id.txtvPosition);
+        currentDisplaySeek = findViewById(R.id.currentDisplaySeek);
 
         SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
         showTimeLeft = prefs.getBoolean(PREF_SHOW_TIME_LEFT, false);
@@ -622,6 +626,7 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
             TimeSpeedConverter converter = new TimeSpeedConverter(controller.getCurrentPlaybackSpeedMultiplier());
             int position = converter.convert((int) (prog * duration));
             txtvPosition.setText(Converter.getDurationStringLong(position));
+            currentDisplaySeek.setText(Converter.getDurationStringLong(position));
 
             if (showTimeLeft) {
                 int timeLeft = converter.convert(duration - (int) (prog * duration));
@@ -632,7 +637,13 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
+        currentDisplaySeek.setScaleX(.8f);
+        currentDisplaySeek.setScaleY(.8f);
+        currentDisplaySeek.animate()
+                .setInterpolator(new FastOutSlowInInterpolator())
+                .alpha(1f).scaleX(1f).scaleY(1f)
+                .setDuration(200)
+                .start();
     }
 
     @Override
@@ -640,6 +651,13 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
         if (controller != null) {
             controller.seekTo((int) (prog * controller.getDuration()));
         }
+        currentDisplaySeek.setScaleX(1f);
+        currentDisplaySeek.setScaleY(1f);
+        currentDisplaySeek.animate()
+                .setInterpolator(new FastOutSlowInInterpolator())
+                .alpha(0f).scaleX(.8f).scaleY(.8f)
+                .setDuration(200)
+                .start();
     }
 
     private void checkFavorite() {
