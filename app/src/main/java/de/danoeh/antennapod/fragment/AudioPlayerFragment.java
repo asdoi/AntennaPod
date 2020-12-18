@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -86,6 +87,7 @@ public class AudioPlayerFragment extends Fragment implements
     private ImageButton butSkip;
     private Toolbar toolbar;
     private ProgressBar progressIndicator;
+    private TextView currentDisplaySeek;
 
     private PlaybackController controller;
     private Disposable disposable;
@@ -120,6 +122,7 @@ public class AudioPlayerFragment extends Fragment implements
         txtvFF = root.findViewById(R.id.txtvFF);
         butSkip = root.findViewById(R.id.butSkip);
         progressIndicator = root.findViewById(R.id.progLoading);
+        currentDisplaySeek = root.findViewById(R.id.currentDisplaySeek);
 
         setupLengthTextView();
         setupControlButtons();
@@ -436,6 +439,7 @@ public class AudioPlayerFragment extends Fragment implements
             TimeSpeedConverter converter = new TimeSpeedConverter(controller.getCurrentPlaybackSpeedMultiplier());
             int position = converter.convert((int) (prog * duration));
             txtvPosition.setText(Converter.getDurationStringLong(position));
+            currentDisplaySeek.setText(Converter.getDurationStringLong(position));
 
             if (showTimeLeft && prog != 0) {
                 int timeLeft = converter.convert(duration - (int) (prog * duration));
@@ -448,6 +452,13 @@ public class AudioPlayerFragment extends Fragment implements
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         // interrupt position Observer, restart later
+        currentDisplaySeek.setScaleX(.8f);
+        currentDisplaySeek.setScaleY(.8f);
+        currentDisplaySeek.animate()
+                .setInterpolator(new FastOutSlowInInterpolator())
+                .alpha(1f).scaleX(1f).scaleY(1f)
+                .setDuration(200)
+                .start();
     }
 
     @Override
@@ -456,6 +467,13 @@ public class AudioPlayerFragment extends Fragment implements
             float prog = seekBar.getProgress() / ((float) seekBar.getMax());
             controller.seekTo((int) (prog * controller.getDuration()));
         }
+        currentDisplaySeek.setScaleX(1f);
+        currentDisplaySeek.setScaleY(1f);
+        currentDisplaySeek.animate()
+                .setInterpolator(new FastOutSlowInInterpolator())
+                .alpha(0f).scaleX(.8f).scaleY(.8f)
+                .setDuration(200)
+                .start();
     }
 
     public void setupOptionsMenu(Playable media) {
