@@ -31,6 +31,7 @@ import java.text.NumberFormat;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
@@ -89,7 +90,8 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
     private ImageButton butFF;
     private TextView txtvFF;
     private ImageButton butSkip;
-    private TextView currentDisplaySeek;
+    private CardView cardViewSeek;
+    private TextView txtvSeek;
 
     private boolean showTimeLeft = false;
 
@@ -495,7 +497,8 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
         setContentView(getContentViewResourceId());
         sbPosition = findViewById(R.id.sbPosition);
         txtvPosition = findViewById(R.id.txtvPosition);
-        currentDisplaySeek = findViewById(R.id.currentDisplaySeek);
+        cardViewSeek = findViewById(R.id.cardViewSeek);
+        txtvSeek = findViewById(R.id.txtvSeek);
 
         SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
         showTimeLeft = prefs.getBoolean(PREF_SHOW_TIME_LEFT, false);
@@ -626,7 +629,7 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
             TimeSpeedConverter converter = new TimeSpeedConverter(controller.getCurrentPlaybackSpeedMultiplier());
             int position = converter.convert((int) (prog * duration));
             txtvPosition.setText(Converter.getDurationStringLong(position));
-            currentDisplaySeek.setText(Converter.getDurationStringLong(position));
+            txtvSeek.setText(Converter.getDurationStringLong(position));
 
             if (showTimeLeft) {
                 int timeLeft = converter.convert(duration - (int) (prog * duration));
@@ -637,9 +640,9 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        currentDisplaySeek.setScaleX(.8f);
-        currentDisplaySeek.setScaleY(.8f);
-        currentDisplaySeek.animate()
+        cardViewSeek.setScaleX(.8f);
+        cardViewSeek.setScaleY(.8f);
+        cardViewSeek.animate()
                 .setInterpolator(new FastOutSlowInInterpolator())
                 .alpha(1f).scaleX(1f).scaleY(1f)
                 .setDuration(200)
@@ -651,9 +654,9 @@ public abstract class MediaplayerActivity extends CastEnabledActivity implements
         if (controller != null) {
             controller.seekTo((int) (prog * controller.getDuration()));
         }
-        currentDisplaySeek.setScaleX(1f);
-        currentDisplaySeek.setScaleY(1f);
-        currentDisplaySeek.animate()
+        cardViewSeek.setScaleX(1f);
+        cardViewSeek.setScaleY(1f);
+        cardViewSeek.animate()
                 .setInterpolator(new FastOutSlowInInterpolator())
                 .alpha(0f).scaleX(.8f).scaleY(.8f)
                 .setDuration(200)
